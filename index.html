@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                <h1 class="mt-5 text-center mb-3">List User</h1>
+                <hr />
+                <v-container>
+                    <!-- modal add -->
+                    <template>
+                        <v-dialog v-model="dialogCreate" persistant max-width="600px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                                    Add
+                                </v-btn>
+                            </template>
+
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headlien">Add Data User</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12">
+                                                <v-text-field label="email" v-model="add_email" required>
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field label="first name" v-model="add_first_name" required>
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field label="last name" v-model="add_last_name" required>
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="dialogCreate = false">Cancel
+                                    </v-btn>
+                                    <v-btn color="blue darken-1" text @click="createData">Add
+                                    </v-btn>
+                                </v-card-actions>
+
+                            </v-card>
+                        </v-dialog>
+                    </template>
+
+                    <!-- modal edit -->
+                    <template>
+                        <v-dialog v-model="dialogEdit" persistant max-width="600px">
+
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headlien">Edit Data User</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12">
+                                                <v-text-field label="email" v-model="edit_email" required>
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field label="first name" v-model="edit_first_name" required>
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field label="last name" v-model="edit_last_name" required>
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="dialogEdit = false">Cancel
+                                    </v-btn>
+                                    <v-btn color="blue darken-1" text @click="updateUser">Edit
+                                    </v-btn>
+                                </v-card-actions>
+
+                            </v-card>
+                        </v-dialog>
+                    </template>
+
+                    <!-- modal delete -->
+                    <template>
+                        <v-dialog v-model="dialogDelete" persistant max-width="600px">
+
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headlien">Delete Data User</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <p> Are you sure ?</p>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="dialogDelete = false">Cancel
+                                    </v-btn>
+                                    <v-btn color="blue darken-1" text @click="deleteUser">Delete
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </template>
+
+                    <!-- tabel user -->
+                    <template>
+                        <v-simple-table>
+                            <template v-slot:default>
+                                <thead>
+                                    <tr>
+                                        <th class="text-left">Email</th>
+                                        <th class="text-left">First_Name</th>
+                                        <th class="text-left">Last_Name</th>
+                                        <th class="text-left">Button</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(user, index) in users" :key="index">
+                                        <td v-text="user.email"></td>
+                                        <td v-text="user.first_name"></td>
+                                        <td v-text="user.last_name"></td>
+                                        <td>
+                                            <v-btn color="info" depressed small @click="getEdit(user)">
+                                                Edit
+                                            </v-btn>
+                                            <v-btn color="error" depressed small @click="getDelete(user)">
+                                                Delete
+                                            </v-btn>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </template>
+                        </v-simple-table>
+                    </template>
+                </v-container>
+            </v-main>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: {
+                users: [],
+                dialogCreate: false,
+                add_email: '',
+                add_first_name: '',
+                add_last_name: '',
+                dialogEdit: false,
+                edit_email: '',
+                edit_id:'',
+                edit_first_name: '',
+                edit_last_name: '',
+                dialogDelete:false,
+                delete_id:''
+            },
+
+            create: function () {
+                this.getUser()
+            },
+            methods: {
+                getUser: function () {
+                    // const URL = "https://reqres.in/api/users?page=2";
+                    // get Data
+                    axios
+                        .get('https://reqres.in/api/users')
+                        .then(res => {
+                            this.users = res.data.data;
+                        })
+                        .catch(err => {
+                            //handle
+                            console.log(err);
+                        })
+                },
+                // Create Data
+                createData: function () {
+                    axios.post('https://reqres.in/api/users', {
+                            email: this.add_email,
+                            first_name: this.add_first_name,
+                            last_name: this.add_last_name
+                        })
+
+                        .then(response => {
+                            // handle sucsess
+                            this.getUser();
+                                this.dialogCreate = false
+                        })
+                        .catch(err => {
+                            //handle
+                            console.log(err);
+                        })
+                },
+
+                // show modal edit
+                    getEdit: function (users){
+                        this.dialogEdit         =  true;
+                        this.edit_email         = users.email;
+                        this.edit_first_name    = users.first_name;
+                        this.edit_last_name     = users.last_name;
+                    },
+
+                    // Update user
+                    updateUser: function () {
+                    axios.post('https://reqres.in/api/users', {
+                            id: this.edit_id,
+                            email: this.edit_email,
+                            first_name: this.edit_first_name,
+                            last_name: this.edit_last_name
+                        })
+
+                        .then(response => {
+                            // handle sucsess
+                                this.getUser();
+                                this.dialogEdit = false;
+                        })
+                        .catch(err => {
+                            //handle
+                            console.log(err);
+                        })
+                },
+                // show modal delete
+                getDelete: function (users){
+                        this.dialogDelete         =  true;
+                        this.delete_id          = users.id;
+                    },
+
+                    deleteUser: function () {
+                    axios.delete('https://reqres.in/api/users', {
+                            data: {
+                                id: this.delete_id
+                            }
+                        })
+
+                        .then(response => {
+                            // handle sucsess
+                            this.getUser();
+                            this.dialogDelete = false
+                        })
+                        .catch(err => {
+                            //handle
+                            console.log(err);
+                        })
+                },
+
+            },
+            beforeMount() {
+                this.getUser();
+            },
+            // mounted() {
+            //     this.createData();
+            // },
+            mounted() {
+                this.updateUser();
+            },
+        })
+    </script>
+</body>
+
+</html>
